@@ -77,6 +77,14 @@ If you want to distinguish the structure of the device, you can use these comman
 > checksec ./rootfs/bin/busybox
 ```
 
+If you can't use gnome-terminal, you can use the following command to install it manually:
+
+```
+> ./qemustart.sh mipsel wheezy 32 manual
+```
+
+
+
 # Authors
 
 Hope you enjoy it.

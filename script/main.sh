@@ -36,23 +36,36 @@ RUNTIME_BOARDB=""
 RUNTIME_COMAND=""
 
 function help(){
-  echo "Usage: qemustart.sh structure[armel|armhf|mipsel|mips] version[squeeze|wheezy] bit[32|64]"
-  echo "For example: qemustart.sh armel squeeze"
-  echo "             qemustart.sh armel wheezy"
-  echo "             qemustart.sh armhf wheezy"
-  echo "             qemustart.sh mips squeeze 32"
-  echo "             qemustart.sh mips squeeze 64"
-  echo "             qemustart.sh mips wheezy 32"
-  echo "             qemustart.sh mips wheezy 64"
-  echo "             qemustart.sh mipsel squeeze 32"
-  echo "             qemustart.sh mipsel squeeze 64"
-  echo "             qemustart.sh mipsel wheezy 32"
-  echo "             qemustart.sh mipsel wheezy 64"
+  echo "Usage: ./qemustart.sh structure[armel|armhf|mipsel|mips] version[squeeze|wheezy] bit[32|64] automatic[auto|manual]"
+  echo "For example: ./qemustart.sh armel squeeze auto"
+  echo "             ./qemustart.sh armel wheezy auto"
+  echo "             ./qemustart.sh armhf wheezy auto"
+  echo "             ./qemustart.sh mips squeeze 32 auto"
+  echo "             ./qemustart.sh mips squeeze 64 auto"
+  echo "             ./qemustart.sh mips wheezy 32 auto"
+  echo "             ./qemustart.sh mips wheezy 64 manual"
+  echo "             ./qemustart.sh mipsel squeeze 32 manual"
+  echo "             ./qemustart.sh mipsel squeeze 64 manual"
+  echo "             ./qemustart.sh mipsel wheezy 32 manual"
+  echo "             ./qemustart.sh mipsel wheezy 64 manual"
 }
 
 structure=$1
 version=$2
 bit=$3
+automatic=$4
+
+case $automatic in
+    "auto")
+              autom="gnome-terminal -x"
+    ;;
+    "manual")
+              autom="##"
+    ;;
+    *)  help;
+        exit;
+    ;;
+esac
 
 case $structure in
     "armel")  
@@ -216,22 +229,30 @@ rsync -ah --progress "./$structure/$RUNTIME_FQCOW2" "./$structure/temp_standard.
 RUNTIME_FQCOW2="temp_standard.qcow2"
 echo "[*]temp file setting done"
 
-gnome-terminal -x ./script/cpf2vm.sh
+$autom ./script/cpf2vm.sh 2>/dev/null
 
 case $structure in
     "armel")
-        gnome-terminal -x ./script/armelcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_INITRD $RUNTIME_FQCOW2 $RUNTIME_COMAND                  
+        $autom ./script/armelcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_INITRD $RUNTIME_FQCOW2 $RUNTIME_COMAND 2>/dev/null
+        echo "If not executed, please enter the following command manually"
+        echo "./script/armelcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_INITRD $RUNTIME_FQCOW2 $RUNTIME_COMAND"
     ;;
     "armhf")
-        gnome-terminal -x ./script/armhfcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_INITRD $RUNTIME_FQCOW2 $RUNTIME_COMAND
+        $autom ./script/armhfcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_INITRD $RUNTIME_FQCOW2 $RUNTIME_COMAND 2>/dev/null
+        echo "If not executed, please enter the following command manually"
+        echo "./script/armhfcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_INITRD $RUNTIME_FQCOW2 $RUNTIME_COMAND"
     ;;
     "mips")
         if [[ "$bit" == "32" ]]
         then
-          gnome-terminal -x ./script/mipscfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND
+          $autom ./script/mipscfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND 2>/dev/null
+          echo "If not executed, please enter the following command manually"
+          echo "./script/mipscfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND"
         elif [[ "$bit" == "64" ]]
         then
-          gnome-terminal -x ./script/mips64cfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND
+          $autom ./script/mips64cfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND 2>/dev/null
+          echo "If not executed, please enter the following command manually"
+          echo "./script/mips64cfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND"
         else
           help;
           exit;
@@ -240,10 +261,14 @@ case $structure in
     "mipsel")
         if [[ "$bit" == "32" ]]
         then
-          gnome-terminal -x ./script/mipselcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND
+          $autom ./script/mipselcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND 2>/dev/null
+          echo "If not executed, please enter the following command manually"
+          echo "./script/mipselcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND"
         elif [[ "$bit" == "64" ]]
         then
-          gnome-terminal -x ./script/mips64elcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND
+          $autom ./script/mips64elcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND 2>/dev/null
+          echo "If not executed, please enter the following command manually"
+          echo "./script/mips64elcfg.sh $structure $RUNTIME_BOARDB $RUNTIME_KERNEL $RUNTIME_FQCOW2 $RUNTIME_COMAND"
         else
           help;
           exit;
